@@ -4,14 +4,20 @@ import { useStrict } from 'mobx';
 import { Provider } from 'mobx-react';
 
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import registerServiceWorker from './utils/registerServiceWorker';
+import { PATIENT_FORM_STORE } from './constants/stores';
 import { PatientFormStore } from './stores';
 import './index.css';
 
 useStrict(true);
 
+const patientFormStore = new PatientFormStore();
+
+patientFormStore.loadIngredients();
+patientFormStore.loadFormulations();
+
 const rootStores = {
-  patientFormStore: new PatientFormStore()
+  [PATIENT_FORM_STORE]: patientFormStore
 };
 
 ReactDOM.render(

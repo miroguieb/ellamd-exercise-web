@@ -1,14 +1,18 @@
 import * as React from 'react';
+import { observer, inject } from 'mobx-react';
 import withStyles, { WithStyles, StyleRulesCallback } from 'material-ui/styles/withStyles';
 import Grid from 'material-ui/Grid';
 import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
 
 import withRoot from '../../withRoot';
+import { PATIENT_FORM_STORE } from '../../constants/stores';
+import { PatientFormStore } from '../../stores';
 
-const styles: StyleRulesCallback<'root' | 'container' | 'textField'> = theme => ({
+const styles: StyleRulesCallback<'root' | 'container' | 'textField' | 'ingredients'> = theme => ({
   root: {
     textAlign: 'center',
-    paddingTop: theme.spacing.unit * 20,
+    paddingTop: theme.spacing.unit * 10,
   },
   container: {
     display: 'flex',
@@ -19,9 +23,18 @@ const styles: StyleRulesCallback<'root' | 'container' | 'textField'> = theme => 
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
   },
+  ingredients: {
+    marginTop: theme.spacing.unit * 10
+  }
 });
 
-class PatientForm extends React.Component<WithStyles<'root' | 'container' | 'textField'>, PatientFormState> {
+@inject(PATIENT_FORM_STORE)
+@observer
+class PatientForm extends React.Component<
+  WithStyles<'root' | 'container' | 'textField' | 'ingredients'>,
+  PatientFormState
+  > {
+
   state = {
     name: '',
     address: '',
@@ -36,11 +49,17 @@ class PatientForm extends React.Component<WithStyles<'root' | 'container' | 'tex
 
   render() {
     const { classes } = this.props;
+    const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
+    const { ingredients, formulations, patient, patientIngredients } = patientFormStore;
 
     return (
       <Grid container justify="center" spacing={0} className={classes.root}>
         <Grid item xs={12} md={8}>
           <form noValidate autoComplete="off" className={classes.container}>
+            <Typography variant="title" color="inherit">
+              Patient
+            </Typography>
+
             <TextField
               id="name"
               label="Name"
@@ -74,6 +93,12 @@ class PatientForm extends React.Component<WithStyles<'root' | 'container' | 'tex
               margin="normal"
               fullWidth
             />
+
+            <div className={classes.ingredients}>
+              <Typography variant="title" color="inherit">
+                Ingredients
+              </Typography>
+            </div>
           </form>
         </Grid>
       </Grid>

@@ -1,11 +1,13 @@
 import { observable, computed, action, extendObservable } from 'mobx';
 
+import { getIngredients, getFormulations } from '../utils/api';
+
 export class PatientFormStore {
   @observable
-  public formulations: Formulation[];
+  public ingredients: Ingredient[];
 
   @observable
-  public ingredients: Ingredient[];
+  public formulations: Formulation[];
 
   @observable
   public patient: Patient;
@@ -32,15 +34,29 @@ export class PatientFormStore {
   }
 
   @action
+  setIngredients = (ingredients: Ingredient[]) => {
+    this.ingredients = ingredients;
+  }
+
+  @action
   loadIngredients = () => {
-    // TODO: Load ingredients
-    this.ingredients = [];
+    getIngredients()
+      .then((ingredients: Ingredient[]) => {
+        this.setIngredients(ingredients);
+      });
+  }
+
+  @action
+  setFormulations = (formulations: Formulation[]) => {
+    this.formulations = formulations;
   }
 
   @action
   loadFormulations = () => {
-    // TODO: Load formulations
-    this.formulations = [];
+    getFormulations()
+      .then((formulations: Formulation[]) => {
+        this.setFormulations(formulations);
+      });
   }
 
   @action
