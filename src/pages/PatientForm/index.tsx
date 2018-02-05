@@ -10,6 +10,7 @@ import withRoot from '../../withRoot';
 import { PATIENT_FORM_STORE } from '../../constants/stores';
 import { PatientFormStore } from '../../stores';
 import IngredientsDialog from './dialogs/IngredientsDialog';
+import FormulationsDialog from './dialogs/FormulationsDialog';
 
 const styles: StyleRulesCallback<'root' | 'container' | 'textField' | 'button' | 'ingredients'> = theme => ({
   root: {
@@ -60,6 +61,18 @@ PatientFormState
     });
   }
 
+  handleFormulationsDialogClose = () => {
+    this.setState({
+      formulationsDialogOpen: false
+    });
+  }
+
+  openFormulationsDialog = () => {
+    this.setState({
+      formulationsDialogOpen: true
+    });
+  }
+
   handleChange = (name: string) => (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({
       [name]: event.currentTarget.value,
@@ -67,10 +80,10 @@ PatientFormState
   }
 
   render() {
-    const { ingredientsDialogOpen } = this.state;
+    const { ingredientsDialogOpen, formulationsDialogOpen } = this.state;
     const { classes } = this.props;
     const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
-    const { ingredients } = patientFormStore;
+    const { ingredients, formulations } = patientFormStore;
 
     return (
       <Grid container justify="center" spacing={0} className={classes.root}>
@@ -83,6 +96,15 @@ PatientFormState
               onClick={this.openIngredientsDialog}
             >
               View Ingredients
+            </Button>
+
+            <Button
+              variant="raised"
+              color="primary"
+              className={classes.button}
+              onClick={this.openFormulationsDialog}
+            >
+              View Formulations
             </Button>
           </div>
 
@@ -136,6 +158,12 @@ PatientFormState
             ingredients={ingredients}
             open={ingredientsDialogOpen}
             onClose={this.handleIngredientsDialogClose}
+          />}
+
+          {formulations && <FormulationsDialog
+            formulations={formulations}
+            open={formulationsDialogOpen}
+            onClose={this.handleFormulationsDialogClose}
           />}
         </Grid>
       </Grid>
