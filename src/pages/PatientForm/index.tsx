@@ -4,12 +4,14 @@ import withStyles, { WithStyles, StyleRulesCallback } from 'material-ui/styles/w
 import Grid from 'material-ui/Grid';
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
 
 import withRoot from '../../withRoot';
 import { PATIENT_FORM_STORE } from '../../constants/stores';
 import { PatientFormStore } from '../../stores';
+import IngredientsDialog from './dialogs/IngredientsDialog';
 
-const styles: StyleRulesCallback<'root' | 'container' | 'textField' | 'ingredients'> = theme => ({
+const styles: StyleRulesCallback<'root' | 'container' | 'textField' | 'button' | 'ingredients'> = theme => ({
   root: {
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 10,
@@ -18,6 +20,9 @@ const styles: StyleRulesCallback<'root' | 'container' | 'textField' | 'ingredien
     display: 'flex',
     flexWrap: 'wrap',
     width: '100%'
+  },
+  button: {
+    margin: theme.spacing.unit,
   },
   textField: {
     marginLeft: theme.spacing.unit,
@@ -31,15 +36,29 @@ const styles: StyleRulesCallback<'root' | 'container' | 'textField' | 'ingredien
 @inject(PATIENT_FORM_STORE)
 @observer
 class PatientForm extends React.Component<
-  WithStyles<'root' | 'container' | 'textField' | 'ingredients'>,
-  PatientFormState
-  > {
+WithStyles<'root' | 'container' | 'textField' | 'button' | 'ingredients'>,
+PatientFormState
+> {
 
   state = {
     name: '',
     address: '',
-    dob: ''
+    dob: '',
+    ingredientsDialogOpen: false,
+    formulationsDialogOpen: false
   };
+
+  handleIngredientsDialogClose = () => {
+    this.setState({
+      ingredientsDialogOpen: false
+    });
+  }
+
+  openIngredientsDialog = () => {
+    this.setState({
+      ingredientsDialogOpen: true
+    });
+  }
 
   handleChange = (name: string) => (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({
@@ -48,13 +67,25 @@ class PatientForm extends React.Component<
   }
 
   render() {
+    const { ingredientsDialogOpen } = this.state;
     const { classes } = this.props;
     const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
-    const { ingredients, formulations, patient, patientIngredients } = patientFormStore;
+    const { ingredients } = patientFormStore;
 
     return (
       <Grid container justify="center" spacing={0} className={classes.root}>
         <Grid item xs={12} md={8}>
+          <div className="buttons">
+            <Button
+              variant="raised"
+              color="primary"
+              className={classes.button}
+              onClick={this.openIngredientsDialog}
+            >
+              View Ingredients
+            </Button>
+          </div>
+
           <form noValidate autoComplete="off" className={classes.container}>
             <Typography variant="title" color="inherit">
               Patient
@@ -96,10 +127,16 @@ class PatientForm extends React.Component<
 
             <div className={classes.ingredients}>
               <Typography variant="title" color="inherit">
-                Ingredients
+                Patient Ingredients
               </Typography>
             </div>
           </form>
+
+          {ingredients && <IngredientsDialog
+            ingredients={ingredients}
+            open={ingredientsDialogOpen}
+            onClose={this.handleIngredientsDialogClose}
+          />}
         </Grid>
       </Grid>
     );
