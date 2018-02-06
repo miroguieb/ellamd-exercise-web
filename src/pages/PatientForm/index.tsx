@@ -52,7 +52,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
     name: '',
     address: '',
     dob: '',
-    patientIngredient: null,
+    patientIngredientIndex: -1,
     ingredientsDialogOpen: false,
     formulationsDialogOpen: false,
     patientIngredientEditDialogOpen: false,
@@ -97,9 +97,9 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
   }
 
   // PatientIngredient edit dialog handlers
-  openPatientIngredientEditDialog = (patientIngredient: FormulationIngredient | null) => () => {
+  openPatientIngredientEditDialog = (patientIngredientIndex: number) => () => {
     this.setState({
-      patientIngredient,
+      patientIngredientIndex,
       patientIngredientEditDialogOpen: true
     });
   }
@@ -110,8 +110,21 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
     });
   }
 
-  handleSavePatientIngredient = (patientIngredient: FormulationIngredient) => {
-    // TODO: Handle saving patient ingredient
+  handleSavePatientIngredient = (newPatientIngredient: FormulationIngredient) => {
+    const { patientIngredientIndex } = this.state;
+    const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
+
+    if (patientIngredientIndex > -1) {
+      patientFormStore.updatePatientIngredient(patientIngredientIndex, newPatientIngredient);
+    } else {
+      patientFormStore.addPatientIngredient(newPatientIngredient);
+    }
+  }
+
+  deletePatientIngredient = (index: number) => () => {
+    const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
+
+    patientFormStore.deletePatientIngredient(index);
   }
 
   render() {
@@ -119,11 +132,13 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
       ingredientsDialogOpen,
       formulationsDialogOpen,
       patientIngredientEditDialogOpen,
-      patientIngredient
+      patientIngredientIndex
     } = this.state;
     const { classes } = this.props;
     const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
     const { ingredients, formulations, patientIngredients } = patientFormStore;
+    const patientIngredient = patientIngredients[patientIngredientIndex];
+    const selectableIngredients = patientFormStore.getSelectableIngredients(patientIngredient);
 
     return (
       <Grid container justify="center" spacing={0} className={classes.root}>
@@ -198,7 +213,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
               aria-label="add"
               color="primary"
               className={classes.addButton}
-              onClick={this.openPatientIngredientEditDialog(null)}
+              onClick={this.openPatientIngredientEditDialog(-1)}
             >
               <Icon>add</Icon>
             </Button>
@@ -227,6 +242,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
                           mini
                           aria-label="edit"
                           className={classes.button}
+                          onClick={this.openPatientIngredientEditDialog(index)}
                         >
                           <Icon>edit_icon</Icon>
                         </Button>
@@ -236,6 +252,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
                           aria-label="delete"
                           mini
                           className={classes.button}
+                          onClick={this.deletePatientIngredient(index)}
                         >
                           <Icon>delete</Icon>
                         </Button>
@@ -265,7 +282,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
           />
 
           <PatientIngredientEditDialog
-            ingredients={ingredients}
+            ingredients={selectableIngredients}
             patientIngredient={patientIngredient}
             open={patientIngredientEditDialogOpen}
             onClose={this.handlePatientIngredientEditDialogClose}

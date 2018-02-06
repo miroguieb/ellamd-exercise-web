@@ -1,4 +1,4 @@
-import { observable, computed, action, extendObservable } from 'mobx';
+import { observable, action, extendObservable } from 'mobx';
 
 import { getIngredients, getFormulations } from '../utils/api';
 
@@ -32,12 +32,10 @@ export class PatientFormStore {
   public getFormulationById = (id: number) =>
     this.formulations.find((formulation: Formulation) => formulation.id === id)
 
-  @computed
-  get selectableIngredients() {
-    return this.ingredients.filter((ingredient: Ingredient) =>
-      this.patientIngredients.findIndex((patientIngredient: FormulationIngredient) =>
-        patientIngredient.ingredient.id === ingredient.id
-      ) === -1
+  public getSelectableIngredients(except: FormulationIngredient | null): Ingredient[] {
+    return this.ingredients.filter((i: Ingredient) =>
+      (except && except.ingredient.id === i.id) ||
+      this.patientIngredients.findIndex((pi: FormulationIngredient) => pi.ingredient.id === i.id) === -1
     );
   }
 
@@ -97,7 +95,7 @@ export class PatientFormStore {
     const pi = this.patientIngredients[index];
 
     if (pi) {
-      this.patientIngredients.splice(0, index);
+      this.patientIngredients.splice(index, 1);
     }
   }
 }
