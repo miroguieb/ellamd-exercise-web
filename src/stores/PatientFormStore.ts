@@ -24,6 +24,12 @@ export class PatientFormStore {
     this.patientIngredients = [];
   }
 
+  public getIngredientById = (id: number) =>
+    this.ingredients.find((ingredient: Ingredient) => ingredient.id === id)
+
+  public getFormulationById = (id: number) =>
+    this.formulations.find((formulation: Formulation) => formulation.id === id)
+
   @computed
   get selectableIngredients() {
     return this.ingredients.filter((ingredient: Ingredient) =>

@@ -11,9 +11,8 @@ interface Ingredient {
 
 interface FormulationIngredient {
   id: number;
-  formulation_id: number;
-  ingredient_id: number;
   percentage: number;
+  ingredient: Ingredient;
 }
 
 interface Formulation {
