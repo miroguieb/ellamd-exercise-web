@@ -21,7 +21,9 @@ interface Props {
 
 class IngredientsDialog extends React.Component<Props & WithStyles<'table' | 'chip'>> {
   handleClose = () => {
-    this.props.onClose();
+    const { onClose } = this.props;
+
+    onClose();
   }
 
   render() {

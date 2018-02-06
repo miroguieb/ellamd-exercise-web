@@ -5,6 +5,7 @@ import Grid from 'material-ui/Grid';
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
+import Icon from 'material-ui/Icon';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
 import withRoot from '../../withRoot';
@@ -12,8 +13,9 @@ import { PATIENT_FORM_STORE } from '../../constants/stores';
 import { PatientFormStore } from '../../stores';
 import IngredientsDialog from './dialogs/IngredientsDialog';
 import FormulationsDialog from './dialogs/FormulationsDialog';
+import PatientIngredientEditDialog from './dialogs/PatientIngredientEditDialog';
 
-const styles: StyleRulesCallback<'root' | 'patient' | 'ingredients' | 'button' | 'textField'> = theme => ({
+const styles: StyleRulesCallback<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textField'> = theme => ({
   root: {
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 10,
@@ -22,7 +24,13 @@ const styles: StyleRulesCallback<'root' | 'patient' | 'ingredients' | 'button' |
     marginTop: theme.spacing.unit * 5
   },
   ingredients: {
-    marginTop: theme.spacing.unit * 5
+    marginTop: theme.spacing.unit * 5,
+    position: 'relative'
+  },
+  addButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0
   },
   button: {
     margin: theme.spacing.unit,
@@ -35,15 +43,32 @@ const styles: StyleRulesCallback<'root' | 'patient' | 'ingredients' | 'button' |
 
 @inject(PATIENT_FORM_STORE)
 @observer
-class PatientForm extends React.Component<WithStyles<'root' | 'patient' | 'ingredients' | 'button' | 'textField'>> {
+class PatientForm extends React.Component<
+WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textField'>
+> {
 
   state = {
     name: '',
     address: '',
     dob: '',
+    patientIngredient: null,
     ingredientsDialogOpen: false,
-    formulationsDialogOpen: false
+    formulationsDialogOpen: false,
+    patientIngredientEditDialogOpen: false,
   };
+
+  handleChange = (name: string) => (event: React.FormEvent<HTMLInputElement>) => {
+    this.setState({
+      [name]: event.currentTarget.value,
+    });
+  }
+
+  // Ingredients dialog handlers
+  openIngredientsDialog = () => {
+    this.setState({
+      ingredientsDialogOpen: true
+    });
+  }
 
   handleIngredientsDialogClose = () => {
     this.setState({
@@ -51,9 +76,10 @@ class PatientForm extends React.Component<WithStyles<'root' | 'patient' | 'ingre
     });
   }
 
-  openIngredientsDialog = () => {
+  // Formulations dialog handlers
+  openFormulationsDialog = () => {
     this.setState({
-      ingredientsDialogOpen: true
+      formulationsDialogOpen: true
     });
   }
 
@@ -63,26 +89,37 @@ class PatientForm extends React.Component<WithStyles<'root' | 'patient' | 'ingre
     });
   }
 
-  openFormulationsDialog = () => {
-    this.setState({
-      formulationsDialogOpen: true
-    });
-  }
-
   handleLoadFormulation = (formulation: Formulation) => {
     const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
 
     patientFormStore.loadIngredientIntoForm(formulation);
   }
 
-  handleChange = (name: string) => (event: React.FormEvent<HTMLInputElement>) => {
+  // PatientIngredient edit dialog handlers
+  openPatientIngredientEditDialog = (patientIngredient: FormulationIngredient | null) => () => {
     this.setState({
-      [name]: event.currentTarget.value,
+      patientIngredient,
+      patientIngredientEditDialogOpen: true
     });
   }
 
+  handlePatientIngredientEditDialogClose = () => {
+    this.setState({
+      patientIngredientEditDialogOpen: false
+    });
+  }
+
+  handleSavePatientIngredient = (patientIngredient: FormulationIngredient) => {
+    // TODO: Handle saving patient ingredient
+  }
+
   render() {
-    const { ingredientsDialogOpen, formulationsDialogOpen } = this.state;
+    const {
+      ingredientsDialogOpen,
+      formulationsDialogOpen,
+      patientIngredientEditDialogOpen,
+      patientIngredient
+    } = this.state;
     const { classes } = this.props;
     const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
     const { ingredients, formulations, patientIngredients } = patientFormStore;
@@ -155,6 +192,16 @@ class PatientForm extends React.Component<WithStyles<'root' | 'patient' | 'ingre
               Patient Ingredients
             </Typography>
 
+            <Button
+              variant="fab"
+              aria-label="add"
+              color="primary"
+              className={classes.addButton}
+              onClick={this.openPatientIngredientEditDialog(null)}
+            >
+              <Icon>add</Icon>
+            </Button>
+
             {patientIngredients.length > 0 ? (
               <Table>
                 <TableHead>
@@ -173,7 +220,24 @@ class PatientForm extends React.Component<WithStyles<'root' | 'patient' | 'ingre
                       <TableCell padding="dense">{ingredient.name}</TableCell>
                       <TableCell padding="dense" numeric>{percentage}</TableCell>
                       <TableCell padding="dense">
-                        Actions
+                        <Button
+                          variant="fab"
+                          color="secondary"
+                          mini
+                          aria-label="edit"
+                          className={classes.button}
+                        >
+                          <Icon>edit_icon</Icon>
+                        </Button>
+
+                        <Button
+                          variant="fab"
+                          aria-label="delete"
+                          mini
+                          className={classes.button}
+                        >
+                          <Icon>delete</Icon>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -197,6 +261,13 @@ class PatientForm extends React.Component<WithStyles<'root' | 'patient' | 'ingre
             open={formulationsDialogOpen}
             onClose={this.handleFormulationsDialogClose}
             onLoadFormulation={this.handleLoadFormulation}
+          />
+
+          <PatientIngredientEditDialog
+            patientIngredient={patientIngredient}
+            open={patientIngredientEditDialogOpen}
+            onClose={this.handlePatientIngredientEditDialogClose}
+            onSave={this.handleSavePatientIngredient}
           />
         </Grid>
       </Grid>

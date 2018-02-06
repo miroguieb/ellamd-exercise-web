@@ -29,7 +29,7 @@ interface Props {
 class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'button' | 'rightIcon'>> {
 
   state = {
-    formulationOpened: null,
+    formulation: null,
     formulationViewDialogOpen: false
   };
 
@@ -41,7 +41,7 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
 
   openFormulationViewDialog = (formulation: Formulation) => () => {
     this.setState({
-      formulationOpened: formulation,
+      formulation,
       formulationViewDialogOpen: true
     });
   }
@@ -62,7 +62,7 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
   }
 
   render() {
-    const { formulationOpened, formulationViewDialogOpen } = this.state;
+    const { formulation, formulationViewDialogOpen } = this.state;
     const { classes, open, formulations } = this.props;
 
     return (
@@ -85,17 +85,18 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
           </TableHead>
 
           <TableBody>
-            {formulations.map((formulation: Formulation, index: number) => {
+            {formulations.map((f: Formulation, index: number) => {
               return (
-                <TableRow key={formulation.id}>
+                <TableRow key={f.id}>
                   <TableCell padding="dense" numeric>{index + 1}</TableCell>
-                  <TableCell padding="dense">{formulation.name}</TableCell>
-                  <TableCell padding="dense" numeric>{formulation.formulation_ingredients.length}</TableCell>
+                  <TableCell padding="dense">{f.name}</TableCell>
+                  <TableCell padding="dense" numeric>{f.formulation_ingredients.length}</TableCell>
                   <TableCell padding="dense">
                     <Button
                       className={classes.button}
                       variant="raised"
-                      onClick={this.openFormulationViewDialog(formulation)}
+                      size="small"
+                      onClick={this.openFormulationViewDialog(f)}
                     >
                       View
                       <Icon className={classes.rightIcon}>menu</Icon>
@@ -104,7 +105,9 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
                     <Button
                       className={classes.button}
                       variant="raised"
-                      onClick={this.loadFormulation(formulation)}
+                      color="secondary"
+                      size="small"
+                      onClick={this.loadFormulation(f)}
                     >
                       Load
                       <Icon className={classes.rightIcon}>file_download</Icon>
@@ -116,8 +119,8 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
           </TableBody>
         </Table>
 
-        {formulationOpened && <FormulationViewDialog
-          formulation={formulationOpened}
+        {formulation && <FormulationViewDialog
+          formulation={formulation}
           open={formulationViewDialogOpen}
           onClose={this.handleFormulationViewDialogClose}
         />}
