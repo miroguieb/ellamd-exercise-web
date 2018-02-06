@@ -15,7 +15,7 @@ import IngredientsListDialog from './dialogs/IngredientsListDialog';
 import FormulationsListDialog from './dialogs/FormulationsListDialog';
 import PatientIngredientEditDialog from './dialogs/PatientIngredientEditDialog';
 
-const styles: StyleRulesCallback<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textField'> =
+const styles: StyleRulesCallback<'root' | 'patient' | 'ingredients' | 'footer' | 'addButton' | 'button' | 'textField'> =
   theme => ({
     root: {
       textAlign: 'center',
@@ -27,6 +27,9 @@ const styles: StyleRulesCallback<'root' | 'patient' | 'ingredients' | 'addButton
     ingredients: {
       marginTop: theme.spacing.unit * 5,
       position: 'relative'
+    },
+    footer: {
+      marginTop: theme.spacing.unit * 5
     },
     addButton: {
       position: 'absolute',
@@ -45,13 +48,10 @@ const styles: StyleRulesCallback<'root' | 'patient' | 'ingredients' | 'addButton
 @inject(PATIENT_FORM_STORE)
 @observer
 class PatientForm extends React.Component<
-WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textField'>
+WithStyles<'root' | 'patient' | 'ingredients' | 'footer' | 'addButton' | 'button' | 'textField'>
 > {
 
   state = {
-    name: '',
-    address: '',
-    dob: '',
     patientIngredientIndex: -1,
     ingredientsDialogOpen: false,
     formulationsDialogOpen: false,
@@ -59,7 +59,9 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
   };
 
   handleChange = (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({
+    const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
+
+    patientFormStore.updatePatient({
       [name]: event.currentTarget.value,
     });
   }
@@ -127,6 +129,12 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
     patientFormStore.deletePatientIngredient(index);
   }
 
+  createReport = () => {
+    const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
+
+    patientFormStore.createReport();
+  }
+
   render() {
     const {
       ingredientsDialogOpen,
@@ -136,7 +144,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
     } = this.state;
     const { classes } = this.props;
     const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
-    const { ingredients, formulations, patientIngredients } = patientFormStore;
+    const { ingredients, formulations, patient, patientIngredients } = patientFormStore;
     const patientIngredient = patientIngredients[patientIngredientIndex];
     const selectableIngredients = patientFormStore.getSelectableIngredients(patientIngredient);
 
@@ -146,7 +154,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
           <div className="buttons">
             <Button
               variant="raised"
-              color="primary"
+              color="secondary"
               className={classes.button}
               onClick={this.openIngredientsListDialog}
             >
@@ -155,7 +163,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
 
             <Button
               variant="raised"
-              color="primary"
+              color="secondary"
               className={classes.button}
               onClick={this.openFormulationsListDialog}
             >
@@ -172,20 +180,22 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
               id="name"
               label="Name"
               className={classes.textField}
-              value={this.state.name}
+              value={patient.name}
               onChange={this.handleChange('name')}
               margin="normal"
               fullWidth
+              required
             />
 
             <TextField
               id="address"
               label="Address"
               className={classes.textField}
-              value={this.state.address}
+              value={patient.address}
               onChange={this.handleChange('address')}
               margin="normal"
               fullWidth
+              required
             />
 
             <TextField
@@ -193,13 +203,14 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
               label="Birthday"
               className={classes.textField}
               type="date"
-              value={this.state.dob}
+              value={patient.dob}
               onChange={this.handleChange('dob')}
               InputLabelProps={{
                 shrink: true,
               }}
               margin="normal"
               fullWidth
+              required
             />
           </div>
 
@@ -266,6 +277,19 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
                   No ingredients
                 </Typography>
               )}
+          </div>
+
+          <div className={classes.footer}>
+            <Button
+              variant="raised"
+              color="primary"
+              size="large"
+              disabled={!patientFormStore.isFormValid}
+              className={classes.button}
+              onClick={this.createReport}
+            >
+              Create Report
+            </Button>
           </div>
 
           <IngredientsListDialog

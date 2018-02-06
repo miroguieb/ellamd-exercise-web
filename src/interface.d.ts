@@ -19,7 +19,7 @@ interface Formulation {
 }
 
 interface Patient {
-  name: string;
-  address: string;
-  dob: string;
+  name?: string;
+  address?: string;
+  dob?: string;
 }

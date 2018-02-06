@@ -1,6 +1,7 @@
-import { observable, action, extendObservable } from 'mobx';
+import { observable, computed, action, extendObservable } from 'mobx';
+import * as fileDownload from 'react-file-download';
 
-import { getIngredients, getFormulations } from '../utils/api';
+import { getIngredients, getFormulations, createReport } from '../utils/api';
 
 export class PatientFormStore {
   @observable
@@ -37,6 +38,11 @@ export class PatientFormStore {
       (except && except.ingredient.id === i.id) ||
       this.patientIngredients.findIndex((pi: FormulationIngredient) => pi.ingredient.id === i.id) === -1
     );
+  }
+
+  @computed
+  get isFormValid() {
+    return this.patient.name && this.patient.address && this.patient.dob && this.patientIngredients.length > 0;
   }
 
   @action
@@ -97,6 +103,18 @@ export class PatientFormStore {
     if (pi) {
       this.patientIngredients.splice(index, 1);
     }
+  }
+
+  @action
+  createReport = () => {
+    if (!this.isFormValid) {
+      return;
+    }
+
+    createReport(this.patient, this.patientIngredients)
+      .then((data: any) => {
+        fileDownload(data, 'report.pdf');
+      });
   }
 }
 
