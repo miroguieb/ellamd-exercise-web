@@ -2,8 +2,8 @@ import * as React from 'react';
 import withStyles, { WithStyles } from 'material-ui/styles/withStyles';
 import Dialog, { DialogTitle } from 'material-ui/Dialog';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
-import IconButton from 'material-ui/IconButton';
-import EditIcon from 'material-ui-icons/Edit';
+import Button from 'material-ui/Button';
+import Icon from 'material-ui/Icon';
 
 import FormulationDialog from './FormulationDialog';
 
@@ -13,6 +13,9 @@ const decorate = withStyles(({ spacing }) => ({
   },
   button: {
     margin: spacing.unit
+  },
+  rightIcon: {
+    marginLeft: spacing.unit,
   }
 }));
 
@@ -20,9 +23,10 @@ interface Props {
   formulations: Formulation[];
   open: boolean;
   onClose: Function;
+  onLoadFormulation: Function;
 }
 
-class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'button'>> {
+class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'button' | 'rightIcon'>> {
 
   state = {
     formulationOpened: null,
@@ -42,8 +46,19 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
     });
   }
 
+  loadFormulation = (formulation: Formulation) => () => {
+    const { onClose, onLoadFormulation } = this.props;
+
+    onClose();
+    if (typeof onLoadFormulation === 'function') {
+      onLoadFormulation(formulation);
+    }
+  }
+
   handleClose = () => {
-    this.props.onClose();
+    const { onClose } = this.props;
+
+    onClose();
   }
 
   render() {
@@ -77,13 +92,23 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
                   <TableCell padding="dense">{formulation.name}</TableCell>
                   <TableCell padding="dense" numeric>{formulation.formulation_ingredients.length}</TableCell>
                   <TableCell padding="dense">
-                    <IconButton
+                    <Button
                       className={classes.button}
-                      aria-label="View"
+                      variant="raised"
                       onClick={this.openFormulationDialog(formulation)}
                     >
-                      <EditIcon />
-                    </IconButton>
+                      View
+                      <Icon className={classes.rightIcon}>menu</Icon>
+                    </Button>
+
+                    <Button
+                      className={classes.button}
+                      variant="raised"
+                      onClick={this.loadFormulation(formulation)}
+                    >
+                      Load
+                      <Icon className={classes.rightIcon}>file_download</Icon>
+                    </Button>
                   </TableCell>
                 </TableRow>
               );

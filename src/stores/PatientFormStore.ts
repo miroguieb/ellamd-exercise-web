@@ -22,6 +22,8 @@ export class PatientFormStore {
       dob: ''
     };
     this.patientIngredients = [];
+    this.ingredients = [];
+    this.formulations = [];
   }
 
   public getIngredientById = (id: number) =>
@@ -67,7 +69,8 @@ export class PatientFormStore {
 
   @action
   loadIngredientIntoForm = (formulation: Formulation) => {
-    // TODO: Load formulation into form
+    // Shallow copy before assigning
+    this.patientIngredients = formulation.formulation_ingredients.slice();
   }
 
   @action

@@ -1,5 +1,3 @@
-interface PatientFormState { }
-
 interface Ingredient {
   id: number;
   name: string;
@@ -10,7 +8,6 @@ interface Ingredient {
 }
 
 interface FormulationIngredient {
-  id: number;
   percentage: number;
   ingredient: Ingredient;
 }

@@ -5,6 +5,7 @@ import Grid from 'material-ui/Grid';
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
+import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
 import withRoot from '../../withRoot';
 import { PATIENT_FORM_STORE } from '../../constants/stores';
@@ -12,15 +13,16 @@ import { PatientFormStore } from '../../stores';
 import IngredientsDialog from './dialogs/IngredientsDialog';
 import FormulationsDialog from './dialogs/FormulationsDialog';
 
-const styles: StyleRulesCallback<'root' | 'container' | 'textField' | 'button' | 'ingredients'> = theme => ({
+const styles: StyleRulesCallback<'root' | 'patient' | 'ingredients' | 'button' | 'textField'> = theme => ({
   root: {
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 10,
   },
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    width: '100%'
+  patient: {
+    marginTop: theme.spacing.unit * 5
+  },
+  ingredients: {
+    marginTop: theme.spacing.unit * 5
   },
   button: {
     margin: theme.spacing.unit,
@@ -29,17 +31,11 @@ const styles: StyleRulesCallback<'root' | 'container' | 'textField' | 'button' |
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
   },
-  ingredients: {
-    marginTop: theme.spacing.unit * 10
-  }
 });
 
 @inject(PATIENT_FORM_STORE)
 @observer
-class PatientForm extends React.Component<
-WithStyles<'root' | 'container' | 'textField' | 'button' | 'ingredients'>,
-PatientFormState
-> {
+class PatientForm extends React.Component<WithStyles<'root' | 'patient' | 'ingredients' | 'button' | 'textField'>> {
 
   state = {
     name: '',
@@ -73,6 +69,12 @@ PatientFormState
     });
   }
 
+  handleLoadFormulation = (formulation: Formulation) => {
+    const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
+
+    patientFormStore.loadIngredientIntoForm(formulation);
+  }
+
   handleChange = (name: string) => (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({
       [name]: event.currentTarget.value,
@@ -83,7 +85,7 @@ PatientFormState
     const { ingredientsDialogOpen, formulationsDialogOpen } = this.state;
     const { classes } = this.props;
     const patientFormStore = this.props[PATIENT_FORM_STORE] as PatientFormStore;
-    const { ingredients, formulations } = patientFormStore;
+    const { ingredients, formulations, patientIngredients } = patientFormStore;
 
     return (
       <Grid container justify="center" spacing={0} className={classes.root}>
@@ -108,8 +110,8 @@ PatientFormState
             </Button>
           </div>
 
-          <form noValidate autoComplete="off" className={classes.container}>
-            <Typography variant="title" color="inherit">
+          <div className={classes.patient}>
+            <Typography variant="headline" color="inherit">
               Patient
             </Typography>
 
@@ -146,25 +148,56 @@ PatientFormState
               margin="normal"
               fullWidth
             />
+          </div>
 
-            <div className={classes.ingredients}>
-              <Typography variant="title" color="inherit">
-                Patient Ingredients
-              </Typography>
-            </div>
-          </form>
+          <div className={classes.ingredients}>
+            <Typography variant="headline" color="inherit">
+              Patient Ingredients
+            </Typography>
 
-          {ingredients && <IngredientsDialog
+            {patientIngredients.length > 0 ? (
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell padding="dense" numeric>No.</TableCell>
+                    <TableCell padding="dense">Ingredient</TableCell>
+                    <TableCell padding="dense" numeric>Percentage (%)</TableCell>
+                    <TableCell padding="dense">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {patientIngredients.map(({ percentage, ingredient }, index: number) => (
+                    <TableRow key={ingredient.id}>
+                      <TableCell padding="dense" numeric>{index + 1}</TableCell>
+                      <TableCell padding="dense">{ingredient.name}</TableCell>
+                      <TableCell padding="dense" numeric>{percentage}</TableCell>
+                      <TableCell padding="dense">
+                        Actions
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+                <Typography variant="subheading" color="error">
+                  No ingredients
+                </Typography>
+              )}
+          </div>
+
+          <IngredientsDialog
             ingredients={ingredients}
             open={ingredientsDialogOpen}
             onClose={this.handleIngredientsDialogClose}
-          />}
+          />
 
-          {formulations && <FormulationsDialog
+          <FormulationsDialog
             formulations={formulations}
             open={formulationsDialogOpen}
             onClose={this.handleFormulationsDialogClose}
-          />}
+            onLoadFormulation={this.handleLoadFormulation}
+          />
         </Grid>
       </Grid>
     );
