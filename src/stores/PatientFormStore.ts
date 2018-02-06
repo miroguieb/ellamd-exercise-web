@@ -13,7 +13,7 @@ export class PatientFormStore {
   public patient: Patient;
 
   @observable
-  public patientIngredients: PatientIngredient[];
+  public patientIngredients: FormulationIngredient[];
 
   constructor() {
     this.patient = {
@@ -33,8 +33,8 @@ export class PatientFormStore {
   @computed
   get selectableIngredients() {
     return this.ingredients.filter((ingredient: Ingredient) =>
-      this.patientIngredients.findIndex((patientIngredient: PatientIngredient) =>
-        patientIngredient.ingredient_id === ingredient.id
+      this.patientIngredients.findIndex((patientIngredient: FormulationIngredient) =>
+        patientIngredient.ingredient.id === ingredient.id
       ) === -1
     );
   }
@@ -76,12 +76,12 @@ export class PatientFormStore {
   }
 
   @action
-  addPatientIngredient = (patientIngredient: PatientIngredient) => {
+  addPatientIngredient = (patientIngredient: FormulationIngredient) => {
     this.patientIngredients.push(patientIngredient);
   }
 
   @action
-  updatePatientIngredient = (index: number, patientIngredient: PatientIngredient) => {
+  updatePatientIngredient = (index: number, patientIngredient: FormulationIngredient) => {
     const pi = this.patientIngredients[index];
 
     if (pi) {

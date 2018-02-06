@@ -26,8 +26,3 @@ interface Patient {
   address: string;
   dob: string;
 }
-
-interface PatientIngredient {
-  ingredient_id: number;
-  percentage: number;
-}
