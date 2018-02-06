@@ -58,7 +58,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
     patientIngredientEditDialogOpen: false,
   };
 
-  handleChange = (name: string) => (event: React.FormEvent<HTMLInputElement>) => {
+  handleChange = (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       [name]: event.currentTarget.value,
     });
@@ -265,6 +265,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
           />
 
           <PatientIngredientEditDialog
+            ingredients={ingredients}
             patientIngredient={patientIngredient}
             open={patientIngredientEditDialogOpen}
             onClose={this.handlePatientIngredientEditDialogClose}
