@@ -5,7 +5,7 @@ import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Ta
 import Button from 'material-ui/Button';
 import Icon from 'material-ui/Icon';
 
-import FormulationDialog from './FormulationDialog';
+import FormulationViewDialog from './FormulationViewDialog';
 
 const decorate = withStyles(({ spacing }) => ({
   table: {
@@ -30,19 +30,19 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
 
   state = {
     formulationOpened: null,
-    formulationDialogOpen: false
+    formulationViewDialogOpen: false
   };
 
-  handleFormulationDialogClose = () => {
+  handleFormulationViewDialogClose = () => {
     this.setState({
-      formulationDialogOpen: false
+      formulationViewDialogOpen: false
     });
   }
 
-  openFormulationDialog = (formulation: Formulation) => () => {
+  openFormulationViewDialog = (formulation: Formulation) => () => {
     this.setState({
       formulationOpened: formulation,
-      formulationDialogOpen: true
+      formulationViewDialogOpen: true
     });
   }
 
@@ -62,7 +62,7 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
   }
 
   render() {
-    const { formulationOpened, formulationDialogOpen } = this.state;
+    const { formulationOpened, formulationViewDialogOpen } = this.state;
     const { classes, open, formulations } = this.props;
 
     return (
@@ -95,7 +95,7 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
                     <Button
                       className={classes.button}
                       variant="raised"
-                      onClick={this.openFormulationDialog(formulation)}
+                      onClick={this.openFormulationViewDialog(formulation)}
                     >
                       View
                       <Icon className={classes.rightIcon}>menu</Icon>
@@ -116,10 +116,10 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
           </TableBody>
         </Table>
 
-        {formulationOpened && <FormulationDialog
+        {formulationOpened && <FormulationViewDialog
           formulation={formulationOpened}
-          open={formulationDialogOpen}
-          onClose={this.handleFormulationDialogClose}
+          open={formulationViewDialogOpen}
+          onClose={this.handleFormulationViewDialogClose}
         />}
       </Dialog>
     );

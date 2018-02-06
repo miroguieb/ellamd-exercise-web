@@ -15,7 +15,7 @@ interface Props {
   onClose: Function;
 }
 
-class FormulationDialog extends React.Component<Props & WithStyles<'table'>> {
+class FormulationViewDialog extends React.Component<Props & WithStyles<'table'>> {
   handleClose = () => {
     this.props.onClose();
   }
@@ -63,4 +63,4 @@ class FormulationDialog extends React.Component<Props & WithStyles<'table'>> {
   }
 }
 
-export default decorate(FormulationDialog);
+export default decorate(FormulationViewDialog);
