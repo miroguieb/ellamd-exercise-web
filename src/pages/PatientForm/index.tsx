@@ -11,35 +11,36 @@ import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Ta
 import withRoot from '../../withRoot';
 import { PATIENT_FORM_STORE } from '../../constants/stores';
 import { PatientFormStore } from '../../stores';
-import IngredientsDialog from './dialogs/IngredientsDialog';
-import FormulationsDialog from './dialogs/FormulationsDialog';
+import IngredientsListDialog from './dialogs/IngredientsListDialog';
+import FormulationsListDialog from './dialogs/FormulationsListDialog';
 import PatientIngredientEditDialog from './dialogs/PatientIngredientEditDialog';
 
-const styles: StyleRulesCallback<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textField'> = theme => ({
-  root: {
-    textAlign: 'center',
-    paddingTop: theme.spacing.unit * 10,
-  },
-  patient: {
-    marginTop: theme.spacing.unit * 5
-  },
-  ingredients: {
-    marginTop: theme.spacing.unit * 5,
-    position: 'relative'
-  },
-  addButton: {
-    position: 'absolute',
-    top: 0,
-    right: 0
-  },
-  button: {
-    margin: theme.spacing.unit,
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-  },
-});
+const styles: StyleRulesCallback<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textField'> =
+  theme => ({
+    root: {
+      textAlign: 'center',
+      paddingTop: theme.spacing.unit * 10,
+    },
+    patient: {
+      marginTop: theme.spacing.unit * 5
+    },
+    ingredients: {
+      marginTop: theme.spacing.unit * 5,
+      position: 'relative'
+    },
+    addButton: {
+      position: 'absolute',
+      top: 0,
+      right: 0
+    },
+    button: {
+      margin: theme.spacing.unit,
+    },
+    textField: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+    },
+  });
 
 @inject(PATIENT_FORM_STORE)
 @observer
@@ -63,27 +64,27 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
     });
   }
 
-  // Ingredients dialog handlers
-  openIngredientsDialog = () => {
+  // Ingredients list dialog handlers
+  openIngredientsListDialog = () => {
     this.setState({
       ingredientsDialogOpen: true
     });
   }
 
-  handleIngredientsDialogClose = () => {
+  handleIngredientsListDialogClose = () => {
     this.setState({
       ingredientsDialogOpen: false
     });
   }
 
-  // Formulations dialog handlers
-  openFormulationsDialog = () => {
+  // Formulations list dialog handlers
+  openFormulationsListDialog = () => {
     this.setState({
       formulationsDialogOpen: true
     });
   }
 
-  handleFormulationsDialogClose = () => {
+  handleFormulationsListDialogClose = () => {
     this.setState({
       formulationsDialogOpen: false
     });
@@ -132,7 +133,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
               variant="raised"
               color="primary"
               className={classes.button}
-              onClick={this.openIngredientsDialog}
+              onClick={this.openIngredientsListDialog}
             >
               View Ingredients
             </Button>
@@ -141,7 +142,7 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
               variant="raised"
               color="primary"
               className={classes.button}
-              onClick={this.openFormulationsDialog}
+              onClick={this.openFormulationsListDialog}
             >
               View Formulations
             </Button>
@@ -250,16 +251,16 @@ WithStyles<'root' | 'patient' | 'ingredients' | 'addButton' | 'button' | 'textFi
               )}
           </div>
 
-          <IngredientsDialog
+          <IngredientsListDialog
             ingredients={ingredients}
             open={ingredientsDialogOpen}
-            onClose={this.handleIngredientsDialogClose}
+            onClose={this.handleIngredientsListDialogClose}
           />
 
-          <FormulationsDialog
+          <FormulationsListDialog
             formulations={formulations}
             open={formulationsDialogOpen}
-            onClose={this.handleFormulationsDialogClose}
+            onClose={this.handleFormulationsListDialogClose}
             onLoadFormulation={this.handleLoadFormulation}
           />
 

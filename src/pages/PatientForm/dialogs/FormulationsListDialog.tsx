@@ -26,7 +26,7 @@ interface Props {
   onLoadFormulation: Function;
 }
 
-class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'button' | 'rightIcon'>> {
+class FormulationsListDialog extends React.Component<Props & WithStyles<'table' | 'button' | 'rightIcon'>> {
 
   state = {
     formulation: null,
@@ -129,4 +129,4 @@ class FormulationsDialog extends React.Component<Props & WithStyles<'table' | 'b
   }
 }
 
-export default decorate(FormulationsDialog);
+export default decorate(FormulationsListDialog);

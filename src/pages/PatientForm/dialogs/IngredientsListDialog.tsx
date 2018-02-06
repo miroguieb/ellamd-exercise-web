@@ -19,7 +19,7 @@ interface Props {
   onClose: Function;
 }
 
-class IngredientsDialog extends React.Component<Props & WithStyles<'table' | 'chip'>> {
+class IngredientsListDialog extends React.Component<Props & WithStyles<'table' | 'chip'>> {
   handleClose = () => {
     const { onClose } = this.props;
 
@@ -70,4 +70,4 @@ class IngredientsDialog extends React.Component<Props & WithStyles<'table' | 'ch
   }
 }
 
-export default decorate(IngredientsDialog);
+export default decorate(IngredientsListDialog);
